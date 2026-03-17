@@ -29,13 +29,31 @@ jobs:
 
       - name: Build Windows EXE
         run: |
-          python -m PyInstaller launcher.spec
+          pyinstaller launcher.py --onefile --noconsole --name Start_TentCard_App
+
+      - name: Create python_runtime for Windows
+        run: |
+          python -m venv python_runtime
+          python_runtime\Scripts\pip install -r requirements.txt
+
+      - name: Package Windows Bundle
+        run: |
+          mkdir TentCardGenerator-Windows
+          copy dist\Start_TentCard_App.exe TentCardGenerator-Windows\
+          copy app.py TentCardGenerator-Windows\
+          copy generate_cards.py TentCardGenerator-Windows\
+          copy generate_cards_docx.py TentCardGenerator-Windows\
+          copy requirements.txt TentCardGenerator-Windows\
+          xcopy python_runtime TentCardGenerator-Windows\python_runtime\ /E /I
+          mkdir TentCardGenerator-Windows\logos
+          mkdir TentCardGenerator-Windows\output
+          Compress-Archive -Path TentCardGenerator-Windows -DestinationPath TentCardGenerator-Windows.zip
 
       - name: Upload Windows Build
         uses: actions/upload-artifact@v4
         with:
-          name: TentCardGenerator-Windows   #v2
-          path: dist/TentCardGenerator.exe
+          name: TentCardGenerator-Windows
+          path: TentCardGenerator-Windows.zip
 
 
   build-mac:
@@ -56,46 +74,30 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build Mac App
+      - name: Build Mac Binary
         run: |
-          python -m PyInstaller launcher.spec
+          pyinstaller launcher.py --onefile --windowed --name Start_TentCard_App
 
-      - name: Zip Mac App
+      - name: Create python_runtime for Mac
         run: |
-          cd dist
-          zip -r TentCardGenerator-Mac.zip TentCardGenerator.app
+          python -m venv python_runtime
+          python_runtime/bin/pip install -r requirements.txt
+
+      - name: Package Mac Bundle
+        run: |
+          mkdir TentCardGenerator-Mac
+          cp dist/Start_TentCard_App TentCardGenerator-Mac/
+          cp app.py TentCardGenerator-Mac/
+          cp generate_cards.py TentCardGenerator-Mac/
+          cp generate_cards_docx.py TentCardGenerator-Mac/
+          cp requirements.txt TentCardGenerator-Mac/
+          cp -r python_runtime TentCardGenerator-Mac/python_runtime
+          mkdir TentCardGenerator-Mac/logos
+          mkdir TentCardGenerator-Mac/output
+          zip -r TentCardGenerator-Mac.zip TentCardGenerator-Mac
 
       - name: Upload Mac Build
         uses: actions/upload-artifact@v4
         with:
           name: TentCardGenerator-Mac
-          path: dist/TentCardGenerator-Mac.zip
-
-
-  build-linux:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
-
-      - name: Build Linux Binary
-        run: |
-          python -m PyInstaller launcher.spec
-
-      - name: Upload Linux Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: TentCardGenerator-Linux
-          path: dist/TentCardGenerator
+          path: TentCardGenerator-Mac.zip
