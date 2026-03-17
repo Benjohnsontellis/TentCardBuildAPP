@@ -1,87 +1,86 @@
 name: Build Tent Card Generator
 
 on:
-  push:
-    branches: [ main ]
+  push:
+    branches: [ main ]
 
 jobs:
 
-  build-windows:
-    runs-on: windows-latest
+  build-windows:
+    runs-on: windows-latest
 
-    steps:
-      - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install pyinstaller
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
 
-      - name: Build Windows App
-        run: |
-          pyinstaller launcher.py --onefile --noconsole --name TentCardGenerator
+      - name: Build EXE
+        run: |
+          pyinstaller launcher.py --onefile --noconsole --name TentCardGenerator
 
-      - name: Upload Windows Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: TentCardGenerator-Windows
-          path: dist/TentCardGenerator.exe
-
-
-  build-mac:
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install pyinstaller
-
-      - name: Build Mac App
-        run: |
-          pyinstaller launcher.py --onefile --windowed --name TentCardGenerator
-
-      - name: Upload Mac Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: TentCardGenerator-Mac
-          path: dist/TentCardGenerator
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TentCardGenerator-Windows
+          path: dist/TentCardGenerator.exe
 
 
-  build-linux:
-    runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+  build-mac:
+    runs-on: macos-latest
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install pyinstaller
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-      - name: Build Linux App
-        run: |
-          pyinstaller launcher.py --onefile --name TentCardGenerator
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
 
-      - name: Upload Linux Build
-        uses: actions/upload-artifact@v4
-        with:
-          name: TentCardGenerator-Linux
-          path: dist/TentCardGenerator
+      - name: Build Mac App
+        run: |
+          pyinstaller launcher.py --onefile --windowed --name TentCardGenerator
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TentCardGenerator-Mac
+          path: dist/TentCardGenerator
+
+
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Build Linux Binary
+        run: |
+          pyinstaller launcher.py --onefile --name TentCardGenerator
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TentCardGenerator-Linux
+          path: dist/TentCardGenerator
