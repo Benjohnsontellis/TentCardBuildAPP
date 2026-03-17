@@ -1,26 +1,36 @@
 import subprocess
 import webbrowser
 import time
-import os
 import sys
+import os
 
-if getattr(sys, 'frozen', False):
-    base_dir = os.path.dirname(sys.executable)
-else:
-    base_dir = os.path.dirname(os.path.abspath(__file__))
 
-python_path = os.path.join(base_dir, "python_runtime", "Scripts", "python.exe")
-app_path = os.path.join(base_dir, "app.py")
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+
+app_path = resource_path("app.py")
+
+
 
 subprocess.Popen([
-    python_path,
-    "-m",
-    "streamlit",
-    "run",
-    app_path,
-    "--server.headless=true"
+    sys.executable,
+    "-m",
+    "streamlit",
+    "run",
+    app_path,
+    "--server.headless=true"
 ])
 
-time.sleep(5)
+
+
+time.sleep(4)
 
 webbrowser.open("http://localhost:8501")
