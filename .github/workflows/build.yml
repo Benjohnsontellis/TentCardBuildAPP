@@ -4,9 +4,14 @@ on:
   push:
     branches: [ main ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
+
   build-windows:
     runs-on: windows-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -24,7 +29,27 @@ jobs:
 
       - name: Build Windows EXE
         run: |
-          python -m PyInstaller launcher.py --onefile --noconsole --name TentCardGenerator
+          python -m PyInstaller launcher.py `
+            --onefile `
+            --noconsole `
+            --name TentCardGenerator `
+            --collect-all streamlit `
+            --collect-all pandas `
+            --collect-all reportlab `
+            --collect-all docx `
+            --collect-all qrcode `
+            --collect-all PIL `
+            --collect-all openpyxl `
+            --collect-all altair `
+            --collect-all pydeck `
+            --hidden-import streamlit `
+            --hidden-import streamlit.runtime `
+            --hidden-import streamlit.runtime.scriptrunner `
+            --hidden-import streamlit.web `
+            --hidden-import streamlit.web.cli `
+            --add-data "app.py;." `
+            --add-data "generate_cards.py;." `
+            --add-data "generate_cards_docx.py;."
 
       - name: Upload Windows Build
         uses: actions/upload-artifact@v4
@@ -32,8 +57,10 @@ jobs:
           name: TentCardGenerator-Windows
           path: dist/TentCardGenerator.exe
 
+
   build-mac:
     runs-on: macos-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -51,7 +78,27 @@ jobs:
 
       - name: Build Mac App
         run: |
-          python -m PyInstaller launcher.py --onefile --windowed --name TentCardGenerator
+          python -m PyInstaller launcher.py \
+            --onefile \
+            --windowed \
+            --name TentCardGenerator \
+            --collect-all streamlit \
+            --collect-all pandas \
+            --collect-all reportlab \
+            --collect-all docx \
+            --collect-all qrcode \
+            --collect-all PIL \
+            --collect-all openpyxl \
+            --collect-all altair \
+            --collect-all pydeck \
+            --hidden-import streamlit \
+            --hidden-import streamlit.runtime \
+            --hidden-import streamlit.runtime.scriptrunner \
+            --hidden-import streamlit.web \
+            --hidden-import streamlit.web.cli \
+            --add-data "app.py:." \
+            --add-data "generate_cards.py:." \
+            --add-data "generate_cards_docx.py:."
 
       - name: Upload Mac Build
         uses: actions/upload-artifact@v4
@@ -59,8 +106,10 @@ jobs:
           name: TentCardGenerator-Mac
           path: dist/TentCardGenerator
 
+
   build-linux:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -78,7 +127,26 @@ jobs:
 
       - name: Build Linux Binary
         run: |
-          python -m PyInstaller launcher.py --onefile --name TentCardGenerator
+          python -m PyInstaller launcher.py \
+            --onefile \
+            --name TentCardGenerator \
+            --collect-all streamlit \
+            --collect-all pandas \
+            --collect-all reportlab \
+            --collect-all docx \
+            --collect-all qrcode \
+            --collect-all PIL \
+            --collect-all openpyxl \
+            --collect-all altair \
+            --collect-all pydeck \
+            --hidden-import streamlit \
+            --hidden-import streamlit.runtime \
+            --hidden-import streamlit.runtime.scriptrunner \
+            --hidden-import streamlit.web \
+            --hidden-import streamlit.web.cli \
+            --add-data "app.py:." \
+            --add-data "generate_cards.py:." \
+            --add-data "generate_cards_docx.py:."
 
       - name: Upload Linux Build
         uses: actions/upload-artifact@v4
